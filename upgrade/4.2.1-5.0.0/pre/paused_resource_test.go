@@ -24,7 +24,7 @@ var _ = Describe("Paused resources", func() {
 		By("setting the pipeline")
 		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", "team1-"+guid.String())
 		fly.Run("sp", "-p", "resource1-"+guid.String(),
-			"-c", "pipelines/release-resource.yml",
+			"-c", "../pipelines/release-resource.yml",
 			"-y", "trigger=false",
 			"-v", "hash="+guid.String(),
 			"-n",

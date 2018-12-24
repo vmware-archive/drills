@@ -28,6 +28,9 @@ var (
 	ccClient  concourse.Client
 )
 
+var testsCompletedSuccessfully = 0
+var totalTests = 0
+
 const TARGET = "drill"
 
 type environment struct {
@@ -47,6 +50,12 @@ type ResourceVersion struct {
 	ID      int               `json:"id"`
 	Version map[string]string `json:"version"`
 	Enabled bool              `json:"enabled"`
+}
+
+type Team struct {
+	ID   int                 `json:"id"`
+	Name string              `json:"name"`
+	Auth map[string][]string `json:"auth"`
 }
 
 var _ = BeforeSuite(func() {
@@ -71,6 +80,45 @@ var _ = BeforeSuite(func() {
 
 	// Expect(mainTeamWorkerCount).ToNot(BeZero())
 })
+
+var _ = JustAfterEach(func() {
+	totalTests++
+	if !CurrentGinkgoTestDescription().Failed {
+		testsCompletedSuccessfully++
+	}
+})
+
+var _ = AfterSuite(func() {
+	if testsCompletedSuccessfully < totalTests {
+		// clean up database because some test in the pre failed
+		teams := fly.GetTeams()
+
+		if len(teams) <= 1 {
+			return
+		}
+
+		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint)
+
+		for _, team := range teams {
+			if team.Name != "main" {
+				fly.Run("dt", "-n", team.Name, "--non-interactive")
+			}
+		}
+	}
+})
+
+func (f *Fly) GetTeams() []Team {
+	var teams = []Team{}
+
+	sess := f.Start("teams", "--json")
+	<-sess.Exited
+	Expect(sess.ExitCode()).To(BeZero())
+
+	err := json.Unmarshal(sess.Out.Contents(), &teams)
+	Expect(err).ToNot(HaveOccurred())
+
+	return teams
+}
 
 func TestPre(t *testing.T) {
 	RegisterFailHandler(Fail)

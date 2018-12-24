@@ -122,9 +122,10 @@ github.com/concourse/atc v4.2.2+incompatible h1:hMtYBdeytPtIu/QNuHLQTafiHUHxm852
 github.com/concourse/atc v4.2.2+incompatible/go.mod h1:sB+NvCgZM3gsgFKEec4dRfBAxz8AHrUgol2t4B42wVM=
 github.com/concourse/baggageclaim v1.3.0 h1:OjPyzcHSvY6REqobqv1V2oKxvZg/FH/lh473YkWh2JI=
 github.com/concourse/baggageclaim v1.3.0/go.mod h1:8tZxZHd3i7B3hrqxPc52gBCWDtWmJkMN5+gBVZ9E+y4=
-github.com/concourse/concourse v4.2.2+incompatible h1:rOnaJ6ab+SzIrSF0KpDEa3xkByHDGkl1VcdCVgECGQY=
 github.com/concourse/dex v0.0.0-20181120155244-024cbea7e753 h1:1e4sAPr+xZn0LH8/yGQXdNEaCw4y7NGI3ikgAt0k7v0=
 github.com/concourse/dex v0.0.0-20181120155244-024cbea7e753/go.mod h1:KxaXUXusJaySm+1AjQmBwiyDe7wcR4lLV0GxwOcV598=
+github.com/concourse/drills v0.0.0-20181220215758-cadb33d1851e h1:txlPZ7BFMrVz4/wucByulvl14ptA97/+CmWfbevg0x4=
+github.com/concourse/drills v0.0.0-20181220215758-cadb33d1851e/go.mod h1:haOFeA5wFDMBO17fJ/vQH+wZgbhe1WlMZNYVwrvXXA4=
 github.com/concourse/flag v0.0.0-20180907155614-cb47f24fff1c h1:SwMKBc36jGTSS5/3AqVtbRjbGTvDfR3pJ5MkzfiYSas=
 github.com/concourse/flag v0.0.0-20180907155614-cb47f24fff1c/go.mod h1:ngs845OZCESOe8vgeK5fsCNIiS0vUSqB8MGQMS9+4og=
 github.com/concourse/go-archive v0.0.0-20180803203406-784931698f4f h1:Z7s60kZd9kuWiosivO9QPGH1vmfC/lzLDiuWIy0MT+o=

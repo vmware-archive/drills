@@ -1,4 +1,7 @@
 package common
 
-const TEST = "test"
-const ANOTHER_ONE = "another"
+// constants
+const (
+	IdenticalResourcesIdentifier = "identical-resources-across-teams"
+	PausedToPinnedIdentifier     = "paused-to-pinned-resource"
+)

@@ -3,6 +3,7 @@ package pre_test
 import (
 	"fmt"
 
+	common "github.com/concourse/drills/upgrade/4.2.1-5.0.0/common"
 	uuid "github.com/nu7hatch/gouuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

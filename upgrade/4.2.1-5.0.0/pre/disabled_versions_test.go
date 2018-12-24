@@ -26,7 +26,7 @@ var _ = Describe("Disabled Versions", func() {
 		By("setting team 1s pipeline and creating two versions")
 		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", "team1-"+guid.String())
 		fly.Run("sp", "-p", "resource1-"+guid.String(),
-			"-c", "pipelines/release-resource.yml",
+			"-c", "../pipelines/release-resource.yml",
 			"-y", "trigger=false",
 			"-v", "hash="+guid.String(),
 			"-n",
@@ -37,7 +37,7 @@ var _ = Describe("Disabled Versions", func() {
 		By("setting up team 2s pipeline and creating two versions")
 		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", "team2-"+guid.String())
 		fly.Run("sp", "-p", "resource2-"+guid.String(),
-			"-c", "pipelines/release-resource.yml",
+			"-c", "../pipelines/release-resource.yml",
 			"-y", "trigger=false",
 			"-v", "hash="+guid.String(),
 			"-n",

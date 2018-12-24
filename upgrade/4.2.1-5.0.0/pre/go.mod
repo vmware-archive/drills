@@ -24,9 +24,10 @@ require (
 	github.com/cloudfoundry/bosh-utils v0.0.0-20181206221702-477435b0eed6 // indirect
 	github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e // indirect
 	github.com/cloudfoundry/socks5-proxy v0.0.0-20180530211953-3659db090cb2 // indirect
-	github.com/concourse/atc v4.2.2+incompatible
+	github.com/concourse/atc v4.2.2+incompatible // indirect
 	github.com/concourse/baggageclaim v1.3.0 // indirect
 	github.com/concourse/dex v0.0.0-20181120155244-024cbea7e753 // indirect
+	github.com/concourse/drills v0.0.0-20181220215758-cadb33d1851e
 	github.com/concourse/go-concourse v4.2.2+incompatible
 	github.com/concourse/retryhttp v0.0.0-20181126170240-7ab5e29e634f // indirect
 	github.com/concourse/skymarshal v0.0.0-20180914145848-30842c3e14d6 // indirect
