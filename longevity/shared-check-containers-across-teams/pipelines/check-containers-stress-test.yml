@@ -1,0 +1,167 @@
+---
+resource_types:
+- name: mock
+  type: docker-image
+  source:
+    repository: concourse/mock-resource
+
+resources:
+- name: concourse-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse.git
+
+- name: other-concourse-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse.git
+
+- name: bosh-concourse-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse-bosh-release.git
+
+- name: hg-resource-git
+  type: git
+  source:
+    uri: http://github.com/concourse/hg-release.git
+
+- name: semver-resource-git
+  type: git
+  source:
+    uri: http://github.com/concourse/semver-release.git
+
+- name: concourse-docker-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse-docker.git
+
+- name: concourse-docs-git
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+
+- name: 2m
+  type: time
+  source:
+    interval: 2m
+
+- name: 5m
+  type: time
+  source:
+    interval: 5m
+
+- name: 10m
+  type: time
+  source:
+    interval: 10m
+
+- name: 15m
+  type: time
+  source:
+    interval: 10m
+
+- name: concourse-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: concourse
+
+- name: git-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: git-resource
+
+- name: mock-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: mock-resource
+
+- name: cf-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: cf-resource
+
+- name: tracker-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: tracker-resource
+
+- name: pool-github-release
+  type: github-release
+  source:
+    owner: concourse
+    repository: pool-resource
+
+- name: concourse-docker-image
+  type: docker-image
+  source:
+    repository: concourse/concourse
+
+- name: dev-concourse-docker-image
+  type: docker-image
+  source:
+    repository: concourse/dev
+
+- name: git-docker-image
+  type: docker-image
+  source:
+    repository: concourse/git-resource
+
+- name: mock-docker-image
+  type: docker-image
+  source:
+    repository: concourse/mock-resource
+
+- name: other-mock-docker-image
+  type: docker-image
+  source:
+    repository: concourse/mock-resource
+
+- name: mock-resource
+  type: mock
+  source:
+    force_version: v1
+
+- name: other-mock-resource
+  type: mock
+  source:
+    force_version: v1
+
+- name: mock-resource-2
+  type: mock
+  source:
+    force_version: v2
+
+jobs:
+- name: get-resources
+  plan:
+  - get: concourse-git
+  - get: other-concourse-git
+  - get: bosh-concourse-git
+  - get: hg-resource-git
+  - get: semver-resource-git
+  - get: concourse-docker-git
+  - get: concourse-docs-git
+  - get: 2m
+  - get: 5m
+  - get: 10m
+  - get: 15m
+  - get: concourse-github-release
+  - get: git-github-release
+  - get: mock-github-release
+  - get: cf-github-release
+  - get: tracker-github-release
+  - get: pool-github-release
+  - get: concourse-docker-image
+  - get: dev-concourse-docker-image
+  - get: git-docker-image
+  - get: mock-docker-image
+  - get: other-mock-docker-image
+  - get: mock-resource
+  - get: other-mock-resource
+  - get: mock-resource-2

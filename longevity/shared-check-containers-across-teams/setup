@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ex
+
+# fly login
+# fly create 10 teams
+# fly sp 5 times for each team
