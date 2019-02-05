@@ -1,0 +1,12 @@
+---
+resources:
+- name: some-resource
+  type: mock
+  source:
+    no_initial_version: true
+
+jobs:
+- name: some-job
+  plan:
+  - get: some-resource
+    trigger: false

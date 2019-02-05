@@ -1,0 +1,19 @@
+---
+resource_types:
+- name: mock-resource
+  type: docker-image
+  source:
+    repository: concourse/mock-resource
+
+resources:
+- name: some-resource
+  type: mock-resource
+  source:
+    no_initial_version: true
+    force_version: "pinned"
+
+jobs:
+- name: some-job
+  plan:
+  - get: some-resource
+    trigger: ((trigger))
