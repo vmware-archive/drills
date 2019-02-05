@@ -1,0 +1,156 @@
+resource_types:
+- name: bosh-release
+  type: registry-image
+  source: {repository: dpb587/bosh-release-resource}
+
+- name: bosh-io-release
+  type: registry-image
+  source: {repository: concourse/bosh-io-release-resource}
+
+- name: bosh-io-stemcell
+  type: registry-image
+  source: {repository: concourse/bosh-io-stemcell-resource}
+
+- name: bosh-deployment
+  type: registry-image
+  source: {repository: cloudfoundry/bosh-deployment-resource}
+
+resources:
+- name: old-concourse-release
+  type: bosh-io-release
+  source:
+    repository: concourse/concourse-bosh-release
+
+- name: new-concourse-release
+  type: bosh-release
+  source:
+    uri: https://github.com/concourse/concourse-bosh-release
+    dev_releases: true
+
+- name: old-garden-runc-release
+  type: bosh-io-release
+  version: {version: "1.16.3"}
+  source:
+    repository: cloudfoundry/garden-runc-release
+
+- name: old-postgres-release
+  type: bosh-io-release
+  version: {version: "30"}
+  source:
+    repository: cloudfoundry/postgres-release
+
+- name: new-postgres-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/postgres-release
+
+- name: new-bpm-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-incubator/bpm-release
+
+- name: gcp-xenial-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-xenial-go_agent
+
+- name: old-concourse-bosh-deployment
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse-bosh-deployment
+    branch: master
+
+- name: new-concourse-bosh-deployment
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse-bosh-deployment
+    branch: develop
+
+- name: drills-deployment
+  type: bosh-deployment
+  source:
+    target: ((bosh_target))
+    client: ((bosh_client.id))
+    client_secret: ((bosh_client.secret))
+    deployment: concourse-drills
+
+jobs:
+- name: deploy-old
+  serial: true
+  interruptible: true
+  plan:
+  - aggregate:
+    - get: old-concourse-release
+    - get: old-garden-runc-release
+    - get: old-postgres-release
+    - get: gcp-xenial-stemcell
+    - get: concourse-bosh-deployment
+      resource: old-concourse-bosh-deployment
+  - put: drills-deployment
+    params:
+      manifest: concourse-bosh-deployment/cluster/concourse.yml
+      stemcells:
+      - gcp-xenial-stemcell/*.tgz
+      releases:
+      - old-concourse-release/*.tgz
+      - old-garden-runc-release/*.tgz
+      - old-postgres-release/*.tgz
+      ops_files:
+      - concourse-bosh-deployment/cluster/operations/add-local-users.yml
+      - concourse-bosh-deployment/cluster/operations/privileged-http.yml
+      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      vars_files:
+      - concourse-bosh-deployment/versions.yml
+      vars:
+        deployment_name: concourse-drills
+        external_url: "http://drills.concourse-ci.org"
+        network_name: private
+        web_network_name: web
+        web_network_vm_extension: drills-web-target-pool
+        web_vm_type: web
+        db_vm_type: database
+        worker_vm_type: worker
+        db_persistent_disk_type: small
+        add_local_users: [drills:((drills_password))]
+        main_team_local_users: [drills]
+
+- name: upgrade-to-new
+  serial: true
+  interruptible: true
+  plan:
+  - aggregate:
+    - get: new-concourse-release
+    - get: new-postgres-release
+    - get: new-bpm-release
+    - get: gcp-xenial-stemcell
+      passed: [deploy-old]
+    - get: concourse-bosh-deployment
+      resource: new-concourse-bosh-deployment
+  - put: drills-deployment
+    params:
+      manifest: concourse-bosh-deployment/cluster/concourse.yml
+      stemcells:
+      - gcp-xenial-stemcell/*.tgz
+      releases:
+      - new-concourse-release/*.tgz
+      - new-postgres-release/*.tgz
+      - new-bpm-release/*.tgz
+      ops_files:
+      - concourse-bosh-deployment/cluster/operations/dev-versions.yml
+      - concourse-bosh-deployment/cluster/operations/add-local-users.yml
+      - concourse-bosh-deployment/cluster/operations/privileged-http.yml
+      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      vars_files:
+      - concourse-bosh-deployment/versions.yml
+      vars:
+        deployment_name: concourse-drills
+        external_url: "http://drills.concourse-ci.org"
+        network_name: private
+        web_network_name: web
+        web_network_vm_extension: drills-web-target-pool
+        web_vm_type: web
+        db_vm_type: database
+        worker_vm_type: worker
+        db_persistent_disk_type: small
+        add_local_users: [drills:((drills_password))]
+        main_team_local_users: [drills]
