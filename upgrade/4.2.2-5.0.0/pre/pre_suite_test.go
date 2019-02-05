@@ -38,7 +38,7 @@ type environment struct {
 	FlyHome  string `env:"FLY_HOME"`
 	Username string `env:"ATC_USERNAME"`
 	Password string `env:"ATC_PASSWORD"`
-	Endpoint string `env:"ATC_URI"`
+	Endpoint string `env:"ATC_URL"`
 }
 
 type Container struct {

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -ex
+
+if [ -z "$ATC_URL" ]; then
+  echo "ATC_URL is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_USERNAME" ]; then
+  echo "ATC_USERNAME is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_PASSWORD" ]; then
+  echo "ATC_PASSWORD is not set! :("
+  exit 1
+fi
+
+if [ -z "$FLY_HOME" ]; then
+  FLY_HOME=/tmp/
+  echo "FLY_HOME is set to /tmp/"
+fi
+
+pushd $(dirname $0)
+  curl -o fly "$ATC_URL/api/v1/cli?arch=amd64&platform=$(uname)"
+  chmod +x fly
+  FLY_4_2_2_PATH="./fly"
+
+  ginkgo -v
+popd
