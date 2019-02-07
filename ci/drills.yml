@@ -96,14 +96,18 @@ jobs:
       - old-garden-runc-release/*.tgz
       - old-postgres-release/*.tgz
       ops_files:
+      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
       - concourse-bosh-deployment/cluster/operations/add-local-users.yml
       - concourse-bosh-deployment/cluster/operations/scale.yml
       - concourse-bosh-deployment/cluster/operations/privileged-http.yml
-      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      - concourse-bosh-deployment/cluster/operations/debug-concourse.yml
+      - concourse-bosh-deployment/cluster/operations/encryption.yml
+
       - concourse-bosh-deployment/cluster/operations/influxdb.yml
+      - concourse-bosh-deployment/cluster/operations/syslog_forwarder.yml
       vars_files:
       - concourse-bosh-deployment/versions.yml
-      vars:
+      vars: &vars
         deployment_name: concourse-drills
         external_url: "http://drills.concourse-ci.org"
         network_name: private
@@ -117,6 +121,9 @@ jobs:
         main_team_local_users: [drills]
         web_instances: 2
         worker_instances: 4
+        syslog_address: logs7.papertrailapp.com
+        syslog_port: '48310'
+        syslog_permitted_peer: "*.papertrailapp.com"
 
 - name: upgrade-to-new
   serial: true
@@ -140,25 +147,16 @@ jobs:
       - new-postgres-release/*.tgz
       - new-bpm-release/*.tgz
       ops_files:
+      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
       - concourse-bosh-deployment/cluster/operations/add-local-users.yml
       - concourse-bosh-deployment/cluster/operations/privileged-http.yml
-      - concourse-bosh-deployment/cluster/operations/scale.yml
-      - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      - concourse-bosh-deployment/cluster/operations/debug-concourse.yml
+      - concourse-bosh-deployment/cluster/operations/encryption.yml
+
       - concourse-bosh-deployment/cluster/operations/influxdb.yml
+      - concourse-bosh-deployment/cluster/operations/syslog_forwarder.yml
+
       - concourse-bosh-deployment/cluster/operations/dev-versions.yml
       vars_files:
       - concourse-bosh-deployment/versions.yml
-      vars:
-        deployment_name: concourse-drills
-        external_url: "http://drills.concourse-ci.org"
-        network_name: private
-        web_network_name: web
-        web_network_vm_extension: drills-web-target-pool
-        web_vm_type: web
-        db_vm_type: database
-        worker_vm_type: worker
-        db_persistent_disk_type: small
-        add_local_users: [drills:((drills_password))]
-        main_team_local_users: [drills]
-        web_instances: 2
-        worker_instances: 4
+      vars: *vars
