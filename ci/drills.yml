@@ -149,6 +149,7 @@ jobs:
       ops_files:
       - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
       - concourse-bosh-deployment/cluster/operations/add-local-users.yml
+      - concourse-bosh-deployment/cluster/operations/scale.yml
       - concourse-bosh-deployment/cluster/operations/privileged-http.yml
       - concourse-bosh-deployment/cluster/operations/debug-concourse.yml
       - concourse-bosh-deployment/cluster/operations/encryption.yml
