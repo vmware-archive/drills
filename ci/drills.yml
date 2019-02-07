@@ -97,8 +97,10 @@ jobs:
       - old-postgres-release/*.tgz
       ops_files:
       - concourse-bosh-deployment/cluster/operations/add-local-users.yml
+      - concourse-bosh-deployment/cluster/operations/scale.yml
       - concourse-bosh-deployment/cluster/operations/privileged-http.yml
       - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      - concourse-bosh-deployment/cluster/operations/influxdb.yml
       vars_files:
       - concourse-bosh-deployment/versions.yml
       vars:
@@ -113,6 +115,8 @@ jobs:
         db_persistent_disk_type: small
         add_local_users: [drills:((drills_password))]
         main_team_local_users: [drills]
+        web_instances: 2
+        worker_instances: 4
 
 - name: upgrade-to-new
   serial: true
@@ -136,10 +140,12 @@ jobs:
       - new-postgres-release/*.tgz
       - new-bpm-release/*.tgz
       ops_files:
-      - concourse-bosh-deployment/cluster/operations/dev-versions.yml
       - concourse-bosh-deployment/cluster/operations/add-local-users.yml
       - concourse-bosh-deployment/cluster/operations/privileged-http.yml
+      - concourse-bosh-deployment/cluster/operations/scale.yml
       - concourse-bosh-deployment/cluster/operations/web-network-extension.yml
+      - concourse-bosh-deployment/cluster/operations/influxdb.yml
+      - concourse-bosh-deployment/cluster/operations/dev-versions.yml
       vars_files:
       - concourse-bosh-deployment/versions.yml
       vars:
@@ -154,3 +160,5 @@ jobs:
         db_persistent_disk_type: small
         add_local_users: [drills:((drills_password))]
         main_team_local_users: [drills]
+        web_instances: 2
+        worker_instances: 4

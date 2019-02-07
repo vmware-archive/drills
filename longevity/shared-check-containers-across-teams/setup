@@ -2,6 +2,45 @@
 
 set -ex
 
-# fly login
-# fly create 10 teams
-# fly sp 5 times for each team
+if [ -z "$ATC_URL" ]; then
+  echo "ATC_URL is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_USERNAME" ]; then
+  echo "ATC_USERNAME is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_PASSWORD" ]; then
+  echo "ATC_PASSWORD is not set! :("
+  exit 1
+fi
+
+if [ -z "$FLY_HOME" ]; then
+  FLY_HOME=/tmp/
+  echo "FLY_HOME is set to /tmp/"
+fi
+export HOME=$FLY_HOME
+
+pushd $(dirname $0)
+  curl -o fly "$ATC_URL/api/v1/cli?arch=amd64&platform=$(uname)"
+  chmod +x fly
+  FLY_4_2_2_PATH="./fly"
+
+  ./fly -t drills login -n main -c $ATC_URL -u $ATC_USERNAME -p $ATC_PASSWORD
+
+  for i in `seq 1 5`
+  do
+    team_name="team-$i"
+    ./fly -t drills set-team -n $team_name --local-user=$ATC_USERNAME --non-interactive
+    ./fly -t drills login -n $team_name -u $ATC_USERNAME -p $ATC_PASSWORD
+
+    for j in `seq 1 5`
+    do
+      pipeline_name="pipeline-$j"
+      ./fly -t drills set-pipeline -p $pipeline_name -c pipelines/check-containers-stress-test.yml --non-interactive
+      ./fly -t drills unpause-pipeline -p $pipeline_name
+    done
+  done
+popd

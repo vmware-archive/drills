@@ -24,12 +24,12 @@ resources:
 - name: hg-resource-git
   type: git
   source:
-    uri: http://github.com/concourse/hg-release.git
+    uri: http://github.com/concourse/hg-resource.git
 
 - name: semver-resource-git
   type: git
   source:
-    uri: http://github.com/concourse/semver-release.git
+    uri: http://github.com/concourse/semver-resource.git
 
 - name: concourse-docker-git
   type: git
@@ -61,43 +61,12 @@ resources:
   source:
     interval: 10m
 
-- name: concourse-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: concourse
-
-- name: git-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: git-resource
-
-- name: mock-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: mock-resource
-
-- name: cf-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: cf-resource
-
-- name: tracker-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: tracker-resource
-
-- name: pool-github-release
-  type: github-release
-  source:
-    owner: concourse
-    repository: pool-resource
-
 - name: concourse-docker-image
+  type: docker-image
+  source:
+    repository: concourse/concourse
+
+- name: other-concourse-docker-image
   type: docker-image
   source:
     repository: concourse/concourse
@@ -151,13 +120,8 @@ jobs:
   - get: 5m
   - get: 10m
   - get: 15m
-  - get: concourse-github-release
-  - get: git-github-release
-  - get: mock-github-release
-  - get: cf-github-release
-  - get: tracker-github-release
-  - get: pool-github-release
   - get: concourse-docker-image
+  - get: other-concourse-docker-image
   - get: dev-concourse-docker-image
   - get: git-docker-image
   - get: mock-docker-image
