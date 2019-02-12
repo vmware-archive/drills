@@ -26,7 +26,6 @@ export HOME=$FLY_HOME
 pushd $(dirname $0)
   curl -o fly "$ATC_URL/api/v1/cli?arch=amd64&platform=$(uname)"
   chmod +x fly
-  FLY_4_2_2_PATH="./fly"
 
   ./fly -t drills login -n main -c $ATC_URL -u $ATC_USERNAME -p $ATC_PASSWORD
 
