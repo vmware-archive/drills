@@ -19,7 +19,8 @@ Drills is a repository contains upgrade and longevity **exercises** for Concours
   
   
   
-### Basic Repository Structure
+## Basic Repository Structure
+
 ```
 .
 ├── upgrade                             # Folder that contains the pre and post tests
@@ -80,9 +81,9 @@ Drills is a repository contains upgrade and longevity **exercises** for Concours
     └── ...                             # Additional special setup longevity/performance tests
 ```
 
-### How to run the tests
+## How to run the tests
 
-#### Upgrade Tests
+### Upgrade Tests
 
   1. Deploy your "before" environment
   
@@ -104,7 +105,7 @@ Drills is a repository contains upgrade and longevity **exercises** for Concours
   ./run-all
   ````
   
-#### Longevity Tests
+## Longevity Tests
 
   1. Deploy your "before" environment
   
@@ -125,7 +126,7 @@ Drills is a repository contains upgrade and longevity **exercises** for Concours
   6. Compare the metrics
   
   
-#### Current Drills environment
+### Current Drills environment
 
 * Deployment environment: http://drills.concourse-ci.org/
 * Metrics: https://metrics.concourse-ci.org/dashboard/db/concourse?refresh=1m&orgId=1&var-deployment=drills
