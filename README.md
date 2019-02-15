@@ -1,10 +1,10 @@
 # Drills
 
-Drills is a repository contains upgrade and longevity **exercises** for Concourse. The purpose of these tests are for an extension of the core Concourse testing (topgun and testflight) where the upgrade tests are for testing specific upgrade paths and the longevity tests are for long running pipelines that will test the performance of the current development version.
+Drills is a repository containing upgrade and longevity **exercises** for Concourse. These tests are an extension of the core Concourse testing ([`testflight`](https://github.com/concourse/concourse/tree/master/testflight) and [`topgun`](https://github.com/concourse/concourse/tree/master/topgun)) where the upgrade tests are for testing specific upgrade paths and the longevity tests are for long running pipelines that will test the performance of the current development version.
 
 * **Upgrade path testing**: these are specific, targeted tests for tricky cases we can think of before and after a _specific_ upgrade path like v4.2.2 to v5.0.0.
   
-  * Example: the migration for #2386 and how we represent paused/disabled resource state.
+  * Example: the migration for [#2386](https://github.com/concourse/concourse/issues2386) and how we represent paused/disabled resource state.
   * Success means: "before" test suite passes before the upgrade, and the "after" suite passes after the upgrade.
   
 * **Longevity/soak testing**: these are not tied to specific upgrade paths, and are meant to be a realistic (yet consistently measurable) workload exercising common _and_ corner cases.
