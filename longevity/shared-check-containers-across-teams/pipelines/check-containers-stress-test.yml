@@ -59,7 +59,7 @@ resources:
 - name: 15m
   type: time
   source:
-    interval: 10m
+    interval: 15m
 
 - name: concourse-docker-image
   type: docker-image
