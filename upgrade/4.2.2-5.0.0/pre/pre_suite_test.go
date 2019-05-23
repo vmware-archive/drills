@@ -88,22 +88,24 @@ var _ = BeforeSuite(func() {
 		return
 	}
 
-	for _, team := range teams {
-		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", team.Name)
+	upgradeTeams := []string{"team-" + PausedToPinnedIdentifier, "team-" + PassedConstraintsBetweenJobsIdentifier, "team1-" + IdenticalResourcesIdentifier, "team2-" + IdenticalResourcesIdentifier, "team1-" + DisabledVersionsIdentifier, "team2-" + DisabledVersionsIdentifier}
+
+	toDeleteTeams := []string{}
+	for _, t := range teams {
+		for _, u := range upgradeTeams {
+			if t.Name == u {
+				toDeleteTeams = append(toDeleteTeams, t.Name)
+			}
+		}
+	}
+
+	for _, teamName := range toDeleteTeams {
+		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", teamName)
 
 		pipelines := fly.GetPipelines()
 		for _, pipeline := range pipelines {
 			fly.Run("dp", "-p", pipeline.Name, "--non-interactive")
 		}
-	}
-
-	for _, team := range teams {
-		fly.Login(parsedEnv.Username, parsedEnv.Password, parsedEnv.Endpoint, "-n", team.Name)
-
-		Eventually(func() interface{} {
-			containers := fly.GetContainers()
-			return len(containers)
-		}, 5*time.Minute, 5*time.Second).Should(BeZero())
 	}
 
 	waitForWorkerToBeRunning("", "")
