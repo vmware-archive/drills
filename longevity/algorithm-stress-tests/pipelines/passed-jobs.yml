@@ -1,0 +1,102 @@
+---
+resources:
+- name: 1m
+  type: time
+  source:
+    interval: 1m
+
+- name: concourse
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse.git
+
+- name: 2m
+  type: time
+  source:
+    interval: 2m
+
+- name: concourse-docker-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse-docker.git
+
+- name: concourse-docs-git
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+
+# - name: concourse-release
+#   type: github-release
+#   source:
+#     owner: concourse
+#     repository: concourse
+
+- name: 5m
+  type: time
+  source:
+    interval: 5m
+
+jobs:
+- name: first-job
+  plan:
+  - get: 1m
+    trigger: true
+
+- name: second-job
+  plan:
+  - get: 1m
+    passed: [first-job]
+    trigger: true
+  - get: concourse
+    version: every
+    trigger: true
+
+- name: third-job
+  plan:
+  - get: 1m
+    passed: [second-job]
+    trigger: true
+  - get: concourse
+    passed: [second-job]
+    trigger: true
+  - get: 2m
+    version: every
+    trigger: true
+
+- name: fourth-job
+  plan:
+  - get: 1m
+    version: every
+    trigger: true
+  - get: concourse
+    passed: [third-job]
+
+- name: fifth-job
+  plan:
+  - get: concourse-docs-git
+    trigger: true
+  - get: concourse-docker-git
+    trigger: true
+  - get: 5m
+    trigger: true
+  - get: 1m
+    trigger: true
+    passed: [first-job, second-job]
+  - get: concourse
+    passed: [second-job, third-job, fourth-job]
+  - get: 2m
+    trigger: true
+    passed: [third-job]
+
+- name: sixth-job
+  plan:
+  # - get: concourse-release
+  #   version: {tag: 'v3.0.0'}
+  #   trigger: true
+  - get: 1m
+    version: every
+    trigger: true
+  - get: concourse
+    passed: [second-job]
+
+
