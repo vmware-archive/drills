@@ -84,6 +84,8 @@ jobs:
 
       - cbd-master/cluster/operations/influxdb.yml
       - cbd-master/cluster/operations/syslog_forwarder.yml
+      - cbd-master/cluster/operations/db-stats.yml
+      - cbd-master/cluster/operations/telegraf-postgres.yml
 
       - cbd-master/cluster/operations/enable-global-resources.yml
       vars_files:
@@ -136,6 +138,8 @@ jobs:
 
       - cbd-develop/cluster/operations/influxdb.yml
       - cbd-develop/cluster/operations/syslog_forwarder.yml
+      - cbd-master/cluster/operations/db-stats.yml
+      - cbd-master/cluster/operations/telegraf-postgres.yml
 
       - cbd-develop/cluster/operations/dev-versions.yml
       vars_files:
