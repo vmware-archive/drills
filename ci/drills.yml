@@ -82,10 +82,9 @@ jobs:
       - cbd-master/cluster/operations/privileged-http.yml
       - cbd-master/cluster/operations/debug-concourse.yml
 
-      - cbd-master/cluster/operations/influxdb.yml
       - cbd-master/cluster/operations/syslog_forwarder.yml
       - cbd-master/cluster/operations/db-stats.yml
-      - cbd-master/cluster/operations/telegraf-postgres.yml
+      - cbd-master/cluster/operations/datadog.yml
 
       - cbd-master/cluster/operations/enable-global-resources.yml
       vars_files:
@@ -107,8 +106,8 @@ jobs:
         syslog_address: logs7.papertrailapp.com
         syslog_port: '48310'
         syslog_permitted_peer: "*.papertrailapp.com"
-        influxdb_url: http://10.2.0.2:8086
-        influxdb_database: ((environment))
+        datadog_api_key: ((datadog_api_key))
+        datadog_tags: ["bosh-deployment:concourse-((environment))"]
 
 - name: deploy-branch
   serial: true
@@ -136,10 +135,9 @@ jobs:
       - cbd-develop/cluster/operations/privileged-http.yml
       - cbd-develop/cluster/operations/debug-concourse.yml
 
-      - cbd-develop/cluster/operations/influxdb.yml
       - cbd-develop/cluster/operations/syslog_forwarder.yml
-      - cbd-master/cluster/operations/db-stats.yml
-      - cbd-master/cluster/operations/telegraf-postgres.yml
+      - cbd-develop/cluster/operations/db-stats.yml
+      - cbd-develop/cluster/operations/datadog.yml
 
       - cbd-develop/cluster/operations/dev-versions.yml
       vars_files:
