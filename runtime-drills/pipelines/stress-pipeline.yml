@@ -1,0 +1,30 @@
+resources:
+- name: ubuntu
+  type: registry-image
+  source:
+    repository: ubuntu
+- name: 10m-timer
+  type: time
+  source:
+    interval: 10m
+
+jobs:
+- name: stress-test
+  plan:
+  - get: ubuntu
+  - get: 10m-timer
+    trigger: true
+  - task: stress-it-out
+    privileged: true
+    image: ubuntu
+    config:
+      platform: linux
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          #!/bin/bash
+
+          apt update && apt install stress
+          stress --cpu 4 --io 4 --vm 2 --vm-bytes 1000M --hdd 4 --timeout 5m

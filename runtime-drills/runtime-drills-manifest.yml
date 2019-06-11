@@ -1,0 +1,145 @@
+addons:
+- include:
+    stemcell:
+    - os: ubuntu-trusty
+    - os: ubuntu-xenial
+  jobs:
+  - name: syslog_forwarder
+    properties:
+      syslog:
+        address: logs7.papertrailapp.com
+        custom_rule: |
+          if ($programname startswith "vcap.") then stop
+          if ($programname contains "audispd") then stop
+          if ($programname contains "auditd") then stop
+        permitted_peer: '*.papertrailapp.com'
+        port: "48310"
+        tls_enabled: true
+        transport: tcp
+    release: syslog
+  name: syslog_forwarder
+- jobs:
+  - name: dd-agent
+    release: datadog-agent
+  name: dd-agent
+  properties:
+    dd:
+      api_key: acba629834f37c05b793143bb0d6cd65
+      dogstatsd_port: 18125
+      process_agent_enabled: true
+      tags:
+      - bosh-deployment:concourse-runtime-drills
+      unique_friendly_hostname: true
+      use_dogstatsd: true
+instance_groups:
+- azs:
+  - z1
+  instances: 2
+  jobs:
+  - name: bpm
+    release: bpm
+  - name: web
+    properties:
+      add_local_users:
+      - admin:password
+      bind_port: 80
+      datadog:
+        agent_host: 127.0.0.1
+        agent_port: 18125
+        prefix: concourse.ci
+      enable_global_resources: true
+      external_url: http://runtime-drills.concourse-ci.org
+      log_level: debug
+      main_team:
+        auth:
+          local:
+            users:
+            - admin
+      postgresql:
+        database: atc
+        role:
+          name: concourse
+          password: ((postgres_password))
+      token_signing_key: ((token_signing_key))
+      worker_gateway:
+        authorized_keys: |
+          ((worker_key.public_key))
+        host_key: ((tsa_host_key))
+    release: concourse
+  name: web
+  networks:
+  - name: web
+  stemcell: xenial
+  vm_extensions:
+  - runtime-drills-web-target-pool
+  vm_type: web
+- azs:
+  - z1
+  instances: 1
+  jobs:
+  - name: postgres
+    properties:
+      databases:
+        collect_statement_statistics: true
+        databases:
+        - name: atc
+        port: 5432
+        roles:
+        - name: concourse
+          password: ((postgres_password))
+    release: postgres
+  name: db
+  networks:
+  - name: private
+  persistent_disk_type: super-extra-large
+  stemcell: xenial
+  vm_type: database
+- azs:
+  - z1
+  instances: 5
+  jobs:
+  - name: worker
+    properties:
+      baggageclaim:
+        driver: overlay
+      drain_timeout: 10m
+      log_level: debug
+      worker_gateway:
+        worker_key: ((worker_key))
+    release: concourse
+  name: worker
+  networks:
+  - name: private
+  stemcell: xenial
+  vm_type: worker
+name: concourse-runtime-drills
+releases:
+- name: concourse
+  version: 5.2.0
+- name: bpm
+  version: 1.0.4
+- name: postgres
+  version: "37"
+- name: syslog
+  version: 11.3.2
+- name: datadog-agent
+  version: 2.9.6112
+stemcells:
+- alias: xenial
+  os: ubuntu-xenial
+  version: "315.34"
+update:
+  canaries: 1
+  canary_watch_time: 1000-60000
+  max_in_flight: 3
+  serial: false
+  update_watch_time: 1000-60000
+variables:
+- name: postgres_password
+  type: password
+- name: token_signing_key
+  type: rsa
+- name: tsa_host_key
+  type: ssh
+- name: worker_key
+  type: ssh

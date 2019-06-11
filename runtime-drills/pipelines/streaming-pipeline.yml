@@ -1,0 +1,73 @@
+resources:
+- name: 11m-timer
+  type: time
+  source:
+    interval: 11m
+- name: ubuntu
+  type: registry-image
+  source:
+    repository: ubuntu
+- name: redis
+  type: registry-image
+  source:
+    repository: redis
+- name: mongo
+  type: registry-image
+  source:
+    repository: mongo
+- name: node
+  type: registry-image
+  source:
+    repository: node
+- name: mysql
+  type: registry-image
+  source:
+    repository: mysql
+- name: postgres
+  type: registry-image
+  source:
+    repository: postgres
+- name: registry
+  type: registry-image
+  source:
+    repository: registry
+- name: nginx
+  type: registry-image
+  source:
+    repository: nginx
+
+jobs:
+- name: stress-test
+  plan:
+  - in_parallel:
+    - get: ubuntu
+    - get: redis
+    - get: mongo
+    - get: node
+    - get: mysql
+    - get: postgres
+    - get: registry
+    - get: nginx
+  - get: 11m-timer
+    trigger: true
+  - task: stream-in-everything
+    privileged: true
+    image: ubuntu
+    config:
+      inputs:
+        - name: ubuntu
+        - name: redis
+        - name: mongo
+        - name: node
+        - name: mysql
+        - name: postgres
+        - name: registry
+        - name: nginx
+      platform: linux
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          #!/bin/bash
+          echo "got em"
