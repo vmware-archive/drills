@@ -1,48 +1,44 @@
 resources:
-- name: ubuntu
+- name: concourse-1
   type: registry-image
   source:
-    repository: ubuntu
-- name: redis
+    repository: concourse/concourse
+    foo: bar1
+- name: concourse-2
   type: registry-image
   source:
-    repository: redis
-- name: mongo
+    repository: concourse/concourse
+    foo: bar2
+- name: concourse-3
   type: registry-image
   source:
-    repository: mongo
-- name: node
+    repository: concourse/concourse
+    foo: bar3
+- name: concourse-4
   type: registry-image
   source:
-    repository: node
-- name: mysql
+    repository: concourse/concourse
+    foo: bar4
+- name: concourse-5
   type: registry-image
   source:
-    repository: mysql
-- name: postgres
+    repository: concourse/concourse
+    foo: bar5
+- name: concourse-6
   type: registry-image
   source:
-    repository: postgres
-- name: registry
-  type: registry-image
-  source:
-    repository: registry
-- name: nginx
-  type: registry-image
-  source:
-    repository: nginx
+    repository: concourse/concourse
+    foo: bar6
 
 jobs:
 - name: stress-test
   plan:
-  - get: ubuntu
-  - get: redis
-  - get: mongo
-  - get: node
-  - get: mysql
-  - get: postgres
-  - get: registry
-  - get: nginx
+  - get: concourse-1
+  - get: concourse-2
+  - get: concourse-3
+  - get: concourse-4
+  - get: concourse-5
+  - get: concourse-6
     trigger: true
   - task: stream-in-everything
     privileged: true
