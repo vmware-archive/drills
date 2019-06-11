@@ -1,8 +1,4 @@
 resources:
-- name: 11m-timer
-  type: time
-  source:
-    interval: 11m
 - name: ubuntu
   type: registry-image
   source:
@@ -39,17 +35,14 @@ resources:
 jobs:
 - name: stress-test
   plan:
-  - in_parallel:
-    - get: ubuntu
-    - get: redis
-    - get: mongo
-    - get: node
-    - get: mysql
-    - get: postgres
-    - get: registry
-    - get: nginx
-  - get: 11m-timer
-    trigger: true
+  - get: ubuntu
+  - get: redis
+  - get: mongo
+  - get: node
+  - get: mysql
+  - get: postgres
+  - get: registry
+  - get: nginx
   - task: stream-in-everything
     privileged: true
     image: ubuntu
