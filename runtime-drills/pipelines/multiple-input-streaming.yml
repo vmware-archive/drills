@@ -43,6 +43,7 @@ jobs:
   - get: postgres
   - get: registry
   - get: nginx
+    trigger: true
   - task: stream-in-everything
     privileged: true
     image: ubuntu
