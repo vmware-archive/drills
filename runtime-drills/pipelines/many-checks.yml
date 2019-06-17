@@ -1,0 +1,165 @@
+resources:
+# Docker Resources
+- name: concourse-dev
+  type: registry-image
+  source:
+    repository: concourse/dev
+- name: gcloud
+  type: registry-image
+  source:
+    repository: google/cloud-sdk
+- name: ubuntu
+  type: registry-image
+  source:
+    repository: ubuntu
+- name: licensefinder
+  type: registry-image
+  source:
+    repository: licensefinder/license_finder
+- name: golang
+  type: registry-image
+  source:
+    repository: golang
+- name: redis
+  type: registry-image
+  source:
+    repository: redis
+- name: alpine
+  type: registry-image
+  source:
+    repository: alpine
+- name: nginx
+  type: registry-image
+  source:
+    repository: nginx
+- name: consul
+  type: registry-image
+  source:
+    repository: consul
+- name: node
+  type: registry-image
+  source:
+    repository: node
+
+# Git Resources
+- name: kubernetes
+  type: git
+  source:
+    uri: https://github.com/kubernetes/kubernetes
+- name: concourse
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse
+- name: baggageclaim
+  type: git
+  source:
+    uri: https://github.com/concourse/baggageclaim
+- name: cli
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/cli
+- name: concourse-bosh-release
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse-bosh-release
+- name: uaa
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/uaa
+- name: copilot
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/copilot
+- name: route-emitter
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/route-emitter
+- name: cf-networking-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/cf-networking-release
+
+# Time Resources
+- name: 5m
+  type: time
+  source: {interval: 5m}
+- name: 6m
+  type: time
+  source: {interval: 6m}
+- name: 7m
+  type: time
+  source: {interval: 7m}
+- name: 8m
+  type: time
+  source: {interval: 8m}
+- name: 9m
+  type: time
+  source: {interval: 9m}
+- name: 15m
+  type: time
+  source: {interval: 15m}
+- name: 16m
+  type: time
+  source: {interval: 16m}
+- name: 17m
+  type: time
+  source: {interval: 17m}
+- name: 18m
+  type: time
+  source: {interval: 18m}
+- name: 19m
+  type: time
+  source: {interval: 19m}
+
+
+jobs:
+- name: stress-test
+  plan:
+  - get: concourse-dev
+  - get: gcloud
+  - get: ubuntu
+  - get: kubernetes
+  - get: licensefinder
+  - get: golang
+  - get: redis
+  - get: alpine
+  - get: nginx
+  - get: consul
+  - get: node
+  - get: concourse
+  - get: baggageclaim
+  - get: cli
+  - get: concourse-bosh-release
+  - get: uaa
+  - get: copilot
+  - get: route-emitter
+  - get: cf-networking-release
+  - get: 5m
+  - get: 6m
+  - get: 7m
+  - get: 8m
+  - get: 9m
+  - get: 15m
+  - get: 16m
+  - get: 17m
+  - get: 18m
+  - get: 19m
+  - task: dummy-we-just-want-checks
+    privileged: true
+    image: ubuntu
+    config:
+      inputs:
+      - name: concourse-dev
+      - name: gcloud
+      - name: ubuntu
+      - name: kubernetes
+      - name: licensefinder
+      - name: golang
+      platform: linux
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          #!/bin/bash
+          echo "why did you run this"
