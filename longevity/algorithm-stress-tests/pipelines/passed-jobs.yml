@@ -1,19 +1,23 @@
----
 resources:
 - name: 1m
   type: time
   source:
     interval: 1m
 
-- name: concourse
-  type: git
-  source:
-    uri: https://github.com/concourse/concourse.git
-
 - name: 2m
   type: time
   source:
     interval: 2m
+
+- name: 5m
+  type: time
+  source:
+    interval: 5m
+
+- name: concourse
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse.git
 
 - name: concourse-docker-git
   type: git
@@ -25,53 +29,49 @@ resources:
   source:
     uri: http://github.com/concourse/docs.git
 
-# - name: concourse-release
-#   type: github-release
-#   source:
-#     owner: concourse
-#     repository: concourse
-
-- name: 5m
-  type: time
-  source:
-    interval: 5m
-
 jobs:
 - name: first-job
+  serial: true
   plan:
   - get: 1m
     trigger: true
 
 - name: second-job
+  serial: true
   plan:
   - get: 1m
-    passed: [first-job]
+    passed:
+    - first-job
     trigger: true
   - get: concourse
-    version: every
     trigger: true
+    version: every
 
 - name: third-job
+  serial: true
   plan:
   - get: 1m
-    passed: [second-job]
+    passed:
+    - second-job
     trigger: true
   - get: concourse
-    passed: [second-job]
+    passed:
+    - second-job
     trigger: true
   - get: 2m
-    version: every
     trigger: true
 
 - name: fourth-job
+  serial: true
   plan:
   - get: 1m
-    version: every
     trigger: true
   - get: concourse
-    passed: [third-job]
+    passed:
+    - third-job
 
 - name: fifth-job
+  serial: true
   plan:
   - get: concourse-docs-git
     trigger: true
@@ -80,23 +80,141 @@ jobs:
   - get: 5m
     trigger: true
   - get: 1m
+    passed:
+    - first-job
+    - second-job
     trigger: true
-    passed: [first-job, second-job]
   - get: concourse
-    passed: [second-job, third-job, fourth-job]
+    passed:
+    - second-job
+    - third-job
+    - fourth-job
   - get: 2m
+    passed:
+    - third-job
     trigger: true
-    passed: [third-job]
 
 - name: sixth-job
+  serial: true
   plan:
-  # - get: concourse-release
-  #   version: {tag: 'v3.0.0'}
-  #   trigger: true
   - get: 1m
-    version: every
     trigger: true
   - get: concourse
-    passed: [second-job]
+    passed:
+    - second-job
 
+- name: seventh-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    trigger: true
+  - get: concourse-docker-git
+    trigger: true
+  - get: 5m
+    trigger: true
+  - get: 1m
+    passed:
+    - first-job
+    - second-job
+    trigger: true
+  - get: concourse
+    passed:
+    - sixth-job
+  - get: 2m
+    passed:
+    - third-job
+    trigger: true
 
+- name: eighth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 5m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 1m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse
+    passed:
+    - seventh-job
+  - get: 2m
+    passed:
+    - seventh-job
+    trigger: true
+
+- name: ninth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 5m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 1m
+    passed:
+    - first-job
+    - seventh-job
+    trigger: true
+  - get: concourse
+    passed:
+    - seventh-job
+  - get: 2m
+    passed:
+    - seventh-job
+    trigger: true
+
+- name: tenth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: 5m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: 1m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: concourse
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+  - get: 2m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
