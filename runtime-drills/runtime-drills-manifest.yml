@@ -24,7 +24,7 @@ addons:
   name: dd-agent
   properties:
     dd:
-      api_key: acba629834f37c05b793143bb0d6cd65
+      api_key: ((datadog_api_key))
       dogstatsd_port: 18125
       process_agent_enabled: true
       tags:
