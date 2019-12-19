@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -ex
+
+if [ -z "$FLY_TARGET" ]; then
+  echo "FLY_TARGET is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_URL" ]; then
+  echo "ATC_URL is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_USERNAME" ]; then
+  echo "ATC_USERNAME is not set! :("
+  exit 1
+fi
+
+if [ -z "$ATC_PASSWORD" ]; then
+  echo "ATC_PASSWORD is not set! :("
+  exit 1
+fi
+
+if [ -z "$FLY_HOME" ]; then
+  FLY_HOME=/tmp/
+  echo "FLY_HOME is set to /tmp/"
+fi
+export HOME=$FLY_HOME
+
+pushd $(dirname $0)
+  # curl -o fly "$ATC_URL/api/v1/cli?arch=amd64&platform=$(uname)"
+  # chmod +x fly
+
+  ./fly -t $FLY_TARGET login -n main -c $ATC_URL -u $ATC_USERNAME -p $ATC_PASSWORD
+
+  for i in `seq 1 15`
+  do
+    team_name="team-$i"
+    ./fly -t $FLY_TARGET set-team -n $team_name --local-user=$ATC_USERNAME --non-interactive
+    ./fly -t $FLY_TARGET login -n $team_name -u $ATC_USERNAME -p $ATC_PASSWORD
+
+    for j in `seq 1 30`
+    do
+      pipeline_name="pipeline-$j"
+      ./fly -t $FLY_TARGET set-pipeline -p $pipeline_name -c pipelines/passed-jobs.yml --non-interactive -v param="$i"
+      ./fly -t $FLY_TARGET unpause-pipeline -p $pipeline_name
+      ./fly -t $FLY_TARGET expose-pipeline -p $pipeline_name
+      # ./fly -t drills check-resource -r $pipeline_name/concourse-release -f tag:'2.0.0'
+    done
+  done
+popd
