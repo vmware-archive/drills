@@ -1,0 +1,69 @@
+
+image: concourse/concourse
+imageTag: "6.6.0"
+
+secrets:
+  localUsers: admin:admin,guest:guest
+
+web:
+  replicas: 2
+  localAuth:
+    enabled: true
+  additionalVolumes:
+    - name: dsdsocket
+      hostPath:
+        path: /var/run/datadog
+  additionalVolumeMounts:
+    - name: dsdsocket
+      mountPath: /var/run/datadog
+  resources:
+    requests:
+      cpu: "1500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1500m"
+      memory: "1Gi"
+
+worker:
+  replicas: 10
+  hardAntiAffinity: true
+
+concourse:
+  web:
+    auth:
+      mainTeam:
+        localUser: admin
+    metrics:
+      attribute: "environment:guardian-drills"
+    datadog:
+      enabled: true
+      agentHost: unix
+      agentPort: ///var/run/datadog/dsd.socket
+      prefix: "concourse.guardian-drills"
+    containerPlacementStrategy: fewest-build-containers
+  worker:
+    runtime: guardian
+
+    baggageclaim:
+      driver: overlay
+datadog:
+  datadog:
+    useDogStatsDSocketVolume: true
+    apiKey:
+    appKey:
+    processAgentEnabled: true
+    tags:
+      - "env:guardian-drills"
+    kubeStateMetrics:
+      enabled: false
+
+
+postgresql:
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  postgresqlConfiguration: {"sharedPreloadLibraries": "'pg_stat_statements'", "listenAddresses": "'*'"}
+#  postgresqlPostgresPassword: "pivotal"
+  persistence:
+    size: 64Gi
