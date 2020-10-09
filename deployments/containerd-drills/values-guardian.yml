@@ -34,12 +34,12 @@ concourse:
       mainTeam:
         localUser: admin
     metrics:
-      attribute: "environment:guardian-drills"
+      attribute: "environment:guardian_drills"
     datadog:
       enabled: true
       agentHost: unix
       agentPort: ///var/run/datadog/dsd.socket
-      prefix: "concourse.guardian-drills"
+      prefix: "concourse.guardian_drills"
     containerPlacementStrategy: fewest-build-containers
   worker:
     runtime: guardian
@@ -53,7 +53,7 @@ datadog:
     appKey:
     processAgentEnabled: true
     tags:
-      - "env:guardian-drills"
+      - "env:guardian_drills"
     kubeStateMetrics:
       enabled: false
 
