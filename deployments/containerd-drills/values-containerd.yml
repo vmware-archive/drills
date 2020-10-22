@@ -30,9 +30,11 @@ worker:
 
 concourse:
   web:
+    logLevel: debug
     auth:
       mainTeam:
         localUser: admin
+    maxBuildLogsToRetain: 1000
     metrics:
       attribute: "environment:containerd_drills"
     datadog:
