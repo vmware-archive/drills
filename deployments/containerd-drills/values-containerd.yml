@@ -66,4 +66,4 @@ postgresql:
   postgresqlConfiguration: {"sharedPreloadLibraries": "'pg_stat_statements'", "listenAddresses": "'*'"}
   # postgresqlPostgresPassword: "pivotal"
   persistence:
-    size: 64Gi
+    size: 128Gi
