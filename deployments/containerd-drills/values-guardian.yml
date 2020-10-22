@@ -63,7 +63,7 @@ postgresql:
     requests:
       cpu: 1000m
       memory: 2Gi
-  postgresqlConfiguration: {"sharedPreloadLibraries": "'pg_stat_statements'", "listenAddresses": "'*'"}
+  postgresqlConfiguration: {"sharedPreloadLibraries": "'pg_stat_statements'", "listenAddresses": "'*'", "max_connections": "150"}
 #  postgresqlPostgresPassword: "pivotal"
   persistence:
     size: 64Gi
