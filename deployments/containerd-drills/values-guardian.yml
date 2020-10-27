@@ -34,7 +34,7 @@ concourse:
     auth:
       mainTeam:
         localUser: admin
-    maxBuildLogsToRetain: 1000
+    maxBuildLogsToRetain: 5
     metrics:
       attribute: "environment:guardian_drills"
     datadog:
