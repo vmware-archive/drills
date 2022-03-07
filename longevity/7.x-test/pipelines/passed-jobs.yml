@@ -1,0 +1,243 @@
+resources:
+- name: 1m
+  type: time
+  source:
+    interval: 1m
+    unique: ((param))
+
+- name: 2m
+  type: time
+  source:
+    interval: 2m
+    unique: ((param))
+
+- name: 5m
+  type: time
+  source:
+    interval: 5m
+    unique: ((param))
+
+- name: concourse
+  type: git
+  source:
+    uri: https://github.com/concourse/concourse.git
+
+- name: concourse-docker-git
+  type: git
+  source:
+    uri: http://github.com/concourse/concourse-docker.git
+    unique: ((param))
+
+- name: concourse-docs-git
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+    unique: ((param))
+
+jobs:
+- name: first-job
+  serial: true
+  plan:
+  - get: 1m
+    trigger: true
+
+
+- name: second-job
+  serial: true
+  plan:
+  - get: 1m
+    passed:
+    - first-job
+    trigger: true
+  - get: concourse
+    trigger: true
+    version: every
+
+- name: third-job
+  serial: true
+  plan:
+  - get: 1m
+    passed:
+    - second-job
+    trigger: true
+  - get: concourse
+    passed:
+    - second-job
+    trigger: true
+  - get: 2m
+    trigger: true
+
+- name: fourth-job
+  serial: true
+  plan:
+  - get: 1m
+    trigger: true
+  - get: concourse
+    passed:
+    - third-job
+
+- name: fifth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    trigger: true
+  - get: concourse-docker-git
+    trigger: true
+  - get: 5m
+    trigger: true
+  - get: 1m
+    passed:
+    - first-job
+    - second-job
+    trigger: true
+  - get: concourse
+    passed:
+    - second-job
+    - third-job
+    - fourth-job
+  - get: 2m
+    passed:
+    - third-job
+    trigger: true
+
+- name: sixth-job
+  serial: true
+  plan:
+  - get: 1m
+    trigger: true
+  - get: concourse
+    passed:
+    - second-job
+
+- name: seventh-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    trigger: true
+  - get: concourse-docker-git
+    trigger: true
+  - get: 5m
+    trigger: true
+  - get: 1m
+    passed:
+    - first-job
+    - second-job
+    trigger: true
+  - get: concourse
+    passed:
+    - sixth-job
+  - get: 2m
+    passed:
+    - third-job
+    trigger: true
+
+- name: eighth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 5m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 1m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse
+    passed:
+    - seventh-job
+  - get: 2m
+    passed:
+    - seventh-job
+    trigger: true
+
+- name: ninth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 5m
+    passed:
+    - seventh-job
+    trigger: true
+  - get: 1m
+    passed:
+    - first-job
+    - seventh-job
+    trigger: true
+  - get: concourse
+    passed:
+    - seventh-job
+  - get: 2m
+    passed:
+    - seventh-job
+    trigger: true
+
+- name: tenth-job
+  serial: true
+  plan:
+  - get: concourse-docs-git
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: concourse-docker-git
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: 5m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: 1m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - get: concourse
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+  - get: 2m
+    passed:
+    - fifth-job
+    - eighth-job
+    - ninth-job
+    trigger: true
+  - task: wait
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ubuntu
+      run:
+        path: /bin/bash
+        args:
+         - -c
+         - |
+          for i in {1..1000}
+          do
+             echo "Waiting $i ..."
+             sleep 0.1
+          done

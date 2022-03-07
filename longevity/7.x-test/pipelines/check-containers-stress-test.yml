@@ -1,0 +1,190 @@
+---
+resource_types:
+- name: mock
+  type: registry-image
+  source:
+    repository: concourse/mock-resource
+    aws_access_key_id: ((param))
+
+- name: git
+  type: registry-image
+  source:
+    repository: concourse/git-resource
+    aws_access_key_id: ((param))
+
+- name: git-copy
+  type: registry-image
+  source:
+    repository: concourse/git-resource
+
+- name: git-copy-2
+  type: registry-image
+  source:
+    repository: concourse/git-resource
+
+- name: git-2
+  type: registry-image
+  source:
+    repository: concourse/git-resource
+    aws_access_key_id: ((param))2
+
+- name: time
+  type: registry-image
+  source:
+    repository: concourse/time-resource
+    aws_access_key_id: ((param))
+
+- name: registry-2
+  type: registry-image
+  source:
+    repository: concourse/registry-image-resource
+    aws_access_key_id: ((param))
+
+resources:
+- name: concourse-git
+  type: git-2
+  source:
+    uri: http://github.com/concourse/concourse.git
+    unique: ((param))
+
+- name: other-concourse-git
+  type: git-copy
+  source:
+    uri: http://github.com/concourse/concourse.git
+    unique: ((param))
+
+- name: bosh-concourse-git
+  type: git-copy-2
+  source:
+    uri: http://github.com/concourse/concourse-bosh-release.git
+    unique: ((param))
+
+- name: hg-resource-git
+  type: git-2
+  source:
+    uri: http://github.com/concourse/hg-resource.git
+    unique: ((param))
+
+- name: semver-resource-git
+  type: git-copy
+  source:
+    uri: http://github.com/concourse/semver-resource.git
+    unique: ((param))
+
+- name: concourse-docker-git
+  type: git-2
+  source:
+    uri: http://github.com/concourse/concourse-docker.git
+    unique: ((param))
+
+- name: concourse-docs-git
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+
+- name: concourse-docs-git-2
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+
+- name: concourse-docs-git-3
+  type: git
+  source:
+    uri: http://github.com/concourse/docs.git
+
+- name: 2m
+  type: time
+  source:
+    interval: 2m
+
+- name: 5m
+  type: time
+  source:
+    interval: 5m
+
+- name: 10m
+  type: time
+  source:
+    interval: 10m
+
+- name: 15m
+  type: time
+  source:
+    interval: 15m
+
+- name: concourse-docker-image
+  type: registry-2
+  source:
+    repository: concourse/concourse
+    aws_access_key_id: ((param))
+
+- name: other-concourse-docker-image
+  type: registry-2
+  source:
+    repository: concourse/concourse
+    aws_access_key_id: ((param))
+
+- name: dev-concourse-docker-image
+  type: registry-2
+  source:
+    repository: concourse/dev
+    aws_access_key_id: ((param))
+
+- name: git-docker-image
+  type: registry-2
+  source:
+    repository: concourse/git-resource
+    aws_access_key_id: ((param))
+
+- name: mock-docker-image
+  type: registry-2
+  source:
+    repository: concourse/mock-resource
+    aws_access_key_id: ((param))
+
+- name: other-mock-docker-image
+  type: registry-2
+  source:
+    repository: concourse/mock-resource
+    aws_access_key_id: ((param))
+
+- name: mock-resource
+  type: mock
+  source:
+    force_version: ((param))
+
+- name: other-mock-resource
+  type: mock
+  source:
+    force_version: ((param))
+
+- name: mock-resource-2
+  type: mock
+  source:
+    force_version: ((param))2
+
+jobs:
+- name: get-resources
+  plan:
+  - get: concourse-git
+  - get: other-concourse-git
+  - get: bosh-concourse-git
+  - get: hg-resource-git
+  - get: semver-resource-git
+  - get: concourse-docker-git
+  - get: concourse-docs-git
+  - get: concourse-docs-git-2
+  - get: concourse-docs-git-3
+  - get: 2m
+  - get: 5m
+  - get: 10m
+  - get: 15m
+  - get: concourse-docker-image
+  - get: other-concourse-docker-image
+  - get: dev-concourse-docker-image
+  - get: git-docker-image
+  - get: mock-docker-image
+  - get: other-mock-docker-image
+  - get: mock-resource
+  - get: other-mock-resource
+  - get: mock-resource-2
